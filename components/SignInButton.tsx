@@ -1,22 +1,13 @@
 'use client'
 
 import { signIn, signOut, useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
 export default function SignInButton() {
   const { data: session } = useSession()
 
   if (session) {
-    return (
-      <div className="flex flex-col items-center gap-2">
-        <p>Welcome, {session.user?.name}</p>
-        <button
-          onClick={() => signOut()}
-          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-        >
-          Sign Out
-        </button>
-      </div>
-    )
+    redirect('/admin')
   }
 
   return (

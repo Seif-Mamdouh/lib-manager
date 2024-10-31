@@ -9,7 +9,8 @@ export default async function AdminPage() {
   if (!session) {
     redirect('/auth/signin')
   }
-
+  console.log(session)
+  
   return (
     <div className="flex flex-col justify-center items-center min-h-screen gap-4">
       <h1 className="text-2xl font-bold">Library Manager Admin</h1>
