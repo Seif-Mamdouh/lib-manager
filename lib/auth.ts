@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }: { user: any, account: any, profile?: Profile }) {
       // Only allow specific GitHub username
-      if (account?.provider === "github" && (profile as GithubProfile).login === "seif-mamdouh") {
+      if (account?.provider === "github") {
         console.log("Sign in successful");
         return true;
       }

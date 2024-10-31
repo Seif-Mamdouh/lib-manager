@@ -1,5 +1,3 @@
-'use client'
-
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
@@ -16,7 +14,6 @@ export default async function AdminPage() {
     <div className="flex flex-col justify-center items-center min-h-screen gap-4">
       <h1 className="text-2xl font-bold">Library Manager Admin</h1>
       <div>Welcome, {session.user?.name}</div>
-      <SignInButton />
     </div>
   )
 }
