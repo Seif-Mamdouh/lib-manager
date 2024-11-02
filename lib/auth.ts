@@ -11,7 +11,8 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "github" && (profile as GithubProfile)?.login === "Seif-Mamdouh" || (profile as GithubProfile)?.login === "coreyja") {
+      const allowedUsernames = process.env.LIBRARY_MANAGER_ADMIN_GITHUB_USERNAMES?.split(',') || [];
+      if (account?.provider === "github" && allowedUsernames.includes((profile as GithubProfile)?.login)) {
         console.log("Sign in successful");
         return true;
       }
