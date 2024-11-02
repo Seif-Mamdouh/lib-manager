@@ -11,12 +11,10 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Only allow specific GitHub username
       if (account?.provider === "github" && (profile as GithubProfile)?.login === "Seif-Mamdouh" || (profile as GithubProfile)?.login === "coreyja") {
         console.log("Sign in successful");
         return true;
       }
-      // Reject all other sign-in attempts
       redirect('/auth/error')
     },
     async redirect({ url, baseUrl }) {
