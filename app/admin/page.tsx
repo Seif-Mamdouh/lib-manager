@@ -6,7 +6,7 @@ import SignInButton from '@/components/SignInButton'
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect('/auth/signin')
   }
   
