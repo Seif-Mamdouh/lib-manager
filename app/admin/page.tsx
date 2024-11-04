@@ -13,7 +13,7 @@ export default async function AdminPage() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen gap-4">
       <h1 className="text-2xl font-bold">Library Manager Admin</h1>
-      <div>Welcome, {session.user?.name}</div>
+      <div>Welcome, {session.user.name}</div>
       <SignInButton />
     </div>
   )
