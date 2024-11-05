@@ -28,7 +28,10 @@ export default function IsbnLookupForm() {
   }
 
   async function handleSave() {
-    if (!bookData) return
+    if (!bookData) {
+      setError('No book data to save')
+      return
+    }
     try {
       if (!isbn) throw new Error('ISBN is required')
       await saveBook(isbn, bookData)
@@ -63,7 +66,7 @@ export default function IsbnLookupForm() {
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {bookData && (
+      {bookData && !isLoading && (
         <div className="border rounded-md p-4">
           <h3 className="text-xl font-bold mb-2">{bookData.title}</h3>
           <p className="mb-2">Authors: {bookData.authors?.join(', ')}</p>

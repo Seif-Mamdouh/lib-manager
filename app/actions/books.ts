@@ -2,12 +2,12 @@
 
 import prisma from '@/lib/prisma'
 
-interface BookData {
+export type BookData = {
   title: string
-  authors: string[]
+  authors?: string[]
   publishedDate?: string
-  description?: string
   pageCount?: number
+  description?: string
   imageUrl?: string
 }
 
