@@ -34,17 +34,14 @@ export async function lookupBook(isbn: string): Promise<BookData> {
 
 export async function saveBook(isbn: string, bookData: BookData) {
   return prisma.$transaction(async (tx) => {
-    // Try to find existing book
     const existingBook = await tx.book.findUnique({
       where: { isbn },
     })
 
     if (existingBook) {
-      // If book exists, increment stock by 1
       await adjustBookStock(existingBook.id, 1, 'Additional copy added')
       return existingBook
     } else {
-      // If book doesn't exist, create new with initial stock of 1
       return tx.book.create({
         data: {
           isbn,
