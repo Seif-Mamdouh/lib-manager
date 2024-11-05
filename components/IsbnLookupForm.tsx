@@ -7,13 +7,13 @@ import { lookupBook, saveBook, BookData} from '@/app/actions/books'
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
   const [error, setError] = useState('')
-  const [bookData, setBookData] = useState<BookData | null>(null)
+  const [bookData, setBookData] = useState<BookData | undefined>()
 
   const lookupMutation = useMutation({
     mutationFn: lookupBook,
     onMutate: () => {
       setError('')
-      setBookData(null)
+      setBookData(undefined)
     },
     onSuccess: (data) => {
       setBookData(data)
@@ -27,7 +27,7 @@ export default function IsbnLookupForm() {
     mutationFn: () => saveBook(isbn!, bookData!),
     onSuccess: (savedBook) => {
       setIsbn('')
-      setBookData(null)
+      setBookData(undefined)
       alert(
         savedBook.currentStock > 1
           ? `Book stock increased! Current stock: ${savedBook.currentStock}`
