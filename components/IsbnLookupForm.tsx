@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { lookupBook, saveBook, BookData, adjustBookStock } from '@/app/actions/books'
+import { lookupBook, saveBook, BookData} from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
