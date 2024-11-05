@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { lookupBook, saveBook } from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
-  const [isbn, setIsbn] = useState('')
+  const [isbn, setIsbn] = useState<string | undefined>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [bookData, setBookData] = useState<any>(null)
@@ -14,8 +14,10 @@ export default function IsbnLookupForm() {
     setLoading(true)
     setError('')
     setBookData(null)
-
     try {
+      if (!isbn) {
+        throw new Error('ISBN is required')
+      }
       const data = await lookupBook(isbn)
       setBookData(data)
     } catch (err) {
@@ -27,8 +29,8 @@ export default function IsbnLookupForm() {
 
   async function handleSave() {
     if (!bookData) return
-
     try {
+      if (!isbn) throw new Error('ISBN is required')
       await saveBook(isbn, bookData)
       setIsbn('')
       setBookData(null)
@@ -44,7 +46,7 @@ export default function IsbnLookupForm() {
         <div className="flex gap-2">
           <input
             type="text"
-            value={isbn}
+            value={isbn ?? ''}
             onChange={(e) => setIsbn(e.target.value)}
             placeholder="Enter ISBN"
             className="flex-1 px-4 py-2 border rounded-md text-foreground bg-background"
