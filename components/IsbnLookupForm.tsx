@@ -9,7 +9,7 @@ export default function IsbnLookupForm() {
   const [error, setError] = useState('')
   const [bookData, setBookData] = useState<BookData | null>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function lookUpISBN(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -45,7 +45,7 @@ export default function IsbnLookupForm() {
 
   return (
     <div className="w-full max-w-2xl">
-      <form onSubmit={handleSubmit} className="mb-6">
+      <form onSubmit={lookUpISBN} className="mb-6">
         <div className="flex gap-2">
           <input
             type="text"
