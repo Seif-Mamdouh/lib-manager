@@ -5,13 +5,13 @@ import { lookupBook, saveBook } from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [bookData, setBookData] = useState<any>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
+    setIsLoading(true)
     setError('')
     setBookData(null)
     try {
@@ -23,7 +23,7 @@ export default function IsbnLookupForm() {
     } catch (err) {
       setError('Failed to find book')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
@@ -53,10 +53,10 @@ export default function IsbnLookupForm() {
           />
           <button
             type="submit"
-            disabled={loading}
+              disabled={isLoading}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
           >
-            {loading ? 'Loading...' : 'Look up'}
+            {isLoading ? 'Loading...' : 'Look up'}
           </button>
         </div>
       </form>
