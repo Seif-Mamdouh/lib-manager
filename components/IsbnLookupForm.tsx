@@ -29,14 +29,14 @@ export default function IsbnLookupForm() {
       setIsbn('')
       setBookData(undefined)
       alert(
-        savedBook.currentStock > 1
-          ? `Book stock increased! Current stock: ${savedBook.currentStock}`
+        savedBook.currentStock >= 1
+          ? `Book stock increased! Current stock: ${savedBook.currentStock + 1}`
           : 'Book saved successfully!'
       )
     },
     onError: () => {
       setError('Failed to save book')
-    },
+    }, 
   })
 
   const lookUpISBN = (e: React.FormEvent) => {
