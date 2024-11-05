@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { lookupBook, saveBook, BookData } from '@/app/actions/books'
+import { lookupBook, saveBook, BookData, adjustBookStock } from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
@@ -25,10 +25,14 @@ export default function IsbnLookupForm() {
 
   const saveMutation = useMutation({
     mutationFn: () => saveBook(isbn!, bookData!),
-    onSuccess: () => {
+    onSuccess: (savedBook) => {
       setIsbn('')
       setBookData(null)
-      alert('Book saved successfully!')
+      alert(
+        savedBook.currentStock > 1
+          ? `Book stock increased! Current stock: ${savedBook.currentStock}`
+          : 'Book saved successfully!'
+      )
     },
     onError: () => {
       setError('Failed to save book')
