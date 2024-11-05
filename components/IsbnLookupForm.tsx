@@ -1,46 +1,55 @@
 'use client'
 
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData } from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [bookData, setBookData] = useState<BookData | null>(null)
 
-  async function lookUpISBN(e: React.FormEvent) {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    setBookData(null)
-    try {
-      if (!isbn) {
-        throw new Error('ISBN is required')
-      }
-      const data = await lookupBook(isbn)
+  const lookupMutation = useMutation({
+    mutationFn: lookupBook,
+    onMutate: () => {
+      setError('')
+      setBookData(null)
+    },
+    onSuccess: (data) => {
       setBookData(data)
-    } catch (err) {
+    },
+    onError: () => {
       setError('Failed to find book')
-    } finally {
-      setIsLoading(false)
+    },
+  })
+
+  const saveMutation = useMutation({
+    mutationFn: () => saveBook(isbn!, bookData!),
+    onSuccess: () => {
+      setIsbn('')
+      setBookData(null)
+      alert('Book saved successfully!')
+    },
+    onError: () => {
+      setError('Failed to save book')
+    },
+  })
+
+  const lookUpISBN = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isbn) {
+      setError('ISBN is required')
+      return
     }
+    lookupMutation.mutate(isbn)
   }
 
-  async function handleSave() {
+  const handleSave = () => {
     if (!bookData) {
       setError('No book data to save')
       return
     }
-    try {
-      if (!isbn) throw new Error('ISBN is required')
-      await saveBook(isbn, bookData)
-      setIsbn('')
-      setBookData(null)
-      alert('Book saved successfully!')
-    } catch (err) {
-      setError('Failed to save book')
-    }
+    saveMutation.mutate()
   }
 
   return (
@@ -56,17 +65,17 @@ export default function IsbnLookupForm() {
           />
           <button
             type="submit"
-              disabled={isLoading}
+            disabled={lookupMutation.isPending}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
           >
-            {isLoading ? 'Loading...' : 'Look up'}
+            {lookupMutation.isPending ? 'Loading...' : 'Look up'}
           </button>
         </div>
       </form>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {bookData && !isLoading && (
+      {bookData && !lookupMutation.isPending && (
         <div className="border rounded-md p-4">
           <h3 className="text-xl font-bold mb-2">{bookData.title}</h3>
           <p className="mb-2">Authors: {bookData.authors?.join(', ')}</p>
@@ -83,8 +92,9 @@ export default function IsbnLookupForm() {
           <button
             onClick={handleSave}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            disabled={saveMutation.isPending}
           >
-            Save Book
+            {saveMutation.isPending ? 'Saving...' : 'Save Book'}
           </button>
         </div>
       )}
