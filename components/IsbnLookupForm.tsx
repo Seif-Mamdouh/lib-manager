@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { lookupBook, saveBook } from '@/app/actions/books'
+import { lookupBook, saveBook, BookData } from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [bookData, setBookData] = useState<any>(null)
+  const [bookData, setBookData] = useState<BookData | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
