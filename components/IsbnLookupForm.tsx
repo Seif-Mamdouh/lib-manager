@@ -1,33 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData} from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
-  const [isbn, setIsbn] = useState<string | undefined>()
+  const [isbn, setIsbn] = useState<string>('')
   const [error, setError] = useState('')
-  const [bookData, setBookData] = useState<BookData | undefined>()
 
-  const lookupMutation = useMutation({
-    mutationFn: lookupBook,
-    onMutate: () => {
-      setError('')
-      setBookData(undefined)
-    },
-    onSuccess: (data) => {
-      setBookData(data)
-    },
-    onError: () => {
+  const { data: bookData, isLoading } = useQuery({
+    queryKey: ['book', isbn],
+    queryFn: () => lookupBook(isbn),
+    enabled: isbn.length === 13 || isbn.length === 10,
+    retry: false,
+    throwOnError: () => {
       setError('Failed to find book')
-    },
+      return false
+    }
   })
 
   const saveMutation = useMutation({
     mutationFn: () => saveBook(isbn!, bookData!),
     onSuccess: () => {
       setIsbn('')
-      setBookData(undefined)
       alert('Book saved successfully!')
     },
     onError: () => {
@@ -35,47 +30,24 @@ export default function IsbnLookupForm() {
     }, 
   })
 
-  const lookUpISBN = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isbn) {
-      setError('ISBN is required')
-      return
-    }
-    lookupMutation.mutate(isbn)
-  }
-
-  const handleSave = () => {
-    if (!bookData) {
-      setError('No book data to save')
-      return
-    }
-    saveMutation.mutate()
-  }
-
   return (
-    <div className="w-full max-w-2xl">
-      <form onSubmit={lookUpISBN} className="mb-6">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={isbn ?? ''}
-            onChange={(e) => setIsbn(e.target.value)}
-            placeholder="Enter ISBN"
-            className="flex-1 px-4 py-2 border rounded-md text-foreground bg-background"
-          />
-          <button
-            type="submit"
-            disabled={lookupMutation.isPending}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
-          >
-            {lookupMutation.isPending ? 'Loading...' : 'Look up'}
-          </button>
-        </div>
-      </form>
+    <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
+      <div className="mb-6 w-full">
+        <input
+          type="text"
+          value={isbn}
+          onChange={(e) => {
+            setError('')
+            setIsbn(e.target.value)
+          }}
+          placeholder="Enter ISBN (13 digits or 10 digits)"
+          className="w-full px-4 py-2 border rounded-md text-foreground bg-background"
+        />
+      </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {bookData && !lookupMutation.isPending && (
+      {bookData && !isLoading && (
         <div className="border rounded-md p-4">
           <h3 className="text-xl font-bold mb-2">{bookData.title}</h3>
           <p className="mb-2">Authors: {bookData.authors?.join(', ')}</p>
@@ -90,7 +62,7 @@ export default function IsbnLookupForm() {
           )}
           <p className="text-sm mb-4">{bookData.description}</p>
           <button
-            onClick={handleSave}
+            onClick={(e) => saveMutation.mutate()}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
             disabled={saveMutation.isPending}
           >
