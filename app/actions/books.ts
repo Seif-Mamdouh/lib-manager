@@ -42,13 +42,21 @@ export async function saveBook(isbn: string, bookData: BookData) {
       await adjustBookStock(existingBook.id, 1, 'Additional copy added')
       return existingBook
     } else {
-      return tx.book.create({
+      const book = await tx.book.create({
         data: {
           isbn,
           ...bookData,
-          currentStock: 1,
         },
       })
+      // Create initial stock action
+      await tx.bookStockAction.create({
+        data: {
+          bookId: book.id,
+          quantity: 1,
+          note: 'Initial stock',
+        },
+      })
+      return book
     }
   })
 }
@@ -60,22 +68,22 @@ export async function adjustBookStock(
 ) {
   return await prisma.$transaction(async (tx) => {
     // Create the stock action
-    await tx.bookStockAction.create({
+    return tx.bookStockAction.create({
       data: {
         bookId,
         quantity,
         note,
       },
     })
-
-    // Update the current stock
-    return tx.book.update({
-      where: { id: bookId },
-      data: {
-        currentStock: {
-          increment: quantity,
-        },
-      },
-    })
   })
+}
+
+// New helper function to get current stock
+export async function getCurrentStock(bookId: number): Promise<number> {
+  const stockActions = await prisma.bookStockAction.findMany({
+    where: { bookId },
+    select: { quantity: true },
+  })
+  
+  return stockActions.reduce((total, action) => total + action.quantity, 0)
 }

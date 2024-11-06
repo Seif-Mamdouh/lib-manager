@@ -26,13 +26,13 @@ export default function IsbnLookupForm() {
   const saveMutation = useMutation({
     mutationFn: () => saveBook(isbn!, bookData!),
     onSuccess: (savedBook) => {
-      setIsbn('')
-      setBookData(undefined)
       alert(
-        savedBook.currentStock >= 1
-          ? `Book stock increased! Current stock: ${savedBook.currentStock + 1}`
+        savedBook.currentStock > 0
+          ? `Book stock increased! Current stock: ${savedBook.currentStock}`
           : 'Book saved successfully!'
       )
+      setIsbn('')
+      setBookData(undefined)
     },
     onError: () => {
       setError('Failed to save book')
