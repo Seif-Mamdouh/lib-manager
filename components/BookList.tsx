@@ -7,6 +7,7 @@ import { useState } from 'react'
 export default function BookList() {
   const queryClient = useQueryClient()
   const [adjustments, setAdjustments] = useState<Record<number, string>>({})
+  const [deletingBooks, setDeletingBooks] = useState<Set<number>>(new Set())
   
   const { data: books, isLoading, error } = useQuery({
     queryKey: ['books'],
@@ -14,7 +15,18 @@ export default function BookList() {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: deleteBook,
+    mutationFn: async (id: number) => {
+      setDeletingBooks(prev => new Set(prev).add(id))
+      try {
+        await deleteBook(id)
+      } finally {
+        setDeletingBooks(prev => {
+          const next = new Set(prev)
+          next.delete(id)
+          return next
+        })
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] })
     },
@@ -114,10 +126,10 @@ export default function BookList() {
 
               <button
                 onClick={() => handleDelete(book.id)}
-                className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
-                disabled={deleteMutation.isPending}
+                className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors disabled:bg-gray-400"
+                disabled={deletingBooks.has(book.id)}
               >
-                {deleteMutation.isPending ? 'Deleting...' : 'Delete Book'}
+                {deletingBooks.has(book.id) ? 'Deleting...' : 'Delete Book'}
               </button>
             </div>
           </div>
