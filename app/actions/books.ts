@@ -48,7 +48,6 @@ export async function saveBook(isbn: string, bookData: BookData) {
           ...bookData,
         },
       })
-      // Create initial stock action
       await tx.bookStockAction.create({
         data: {
           bookId: book.id,
@@ -67,15 +66,12 @@ export async function adjustBookStock(
   note?: string
 ) {
   return prisma.$transaction(async (tx) => {
-    // Get current stock
     const currentStock = await getCurrentStock(bookId)
     
-    // Check if adjustment would result in negative stock
     if (currentStock + quantity < 0) {
       throw new Error('Cannot reduce stock below 0')
     }
 
-    // Create the stock action
     return tx.bookStockAction.create({
       data: {
         bookId,
@@ -86,7 +82,6 @@ export async function adjustBookStock(
   })
 }
 
-// New helper function to get current stock
 export async function getCurrentStock(bookId: number): Promise<number> {
   const stockActions = await prisma.bookStockAction.findMany({
     where: { bookId },
@@ -118,12 +113,10 @@ export async function getAllBooks() {
 
 export async function deleteBook(id: number) {
   return prisma.$transaction(async (tx) => {
-    // Delete all stock actions first due to foreign key constraint
     await tx.bookStockAction.deleteMany({
       where: { bookId: id },
     })
     
-    // Then delete the book
     await tx.book.delete({
       where: { id },
     })
@@ -141,7 +134,7 @@ export async function removeBookStock(bookId: number, quantity: number, note: st
     return tx.bookStockAction.create({
       data: {
         bookId,
-        quantity: -quantity, // Negative quantity for removal
+        quantity: -quantity,
         note,
       },
     });
@@ -156,7 +149,6 @@ export async function setBookStock(bookId: number, newStock: number, note: strin
       throw new Error('Stock cannot be negative');
     }
 
-    // Calculate the adjustment needed
     const adjustment = newStock - currentStock;
     
     return tx.bookStockAction.create({
