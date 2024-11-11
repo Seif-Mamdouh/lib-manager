@@ -87,3 +87,23 @@ export async function getCurrentStock(bookId: number): Promise<number> {
   
   return stockActions.reduce((total, action) => total + action.quantity, 0)
 }
+
+export async function getAllBooks() {
+  const books = await prisma.book.findMany({
+    orderBy: {
+      title: 'asc',
+    },
+    include: {
+      BookStockAction: {
+        select: {
+          quantity: true,
+        },
+      },
+    },
+  })
+
+  return books.map(book => ({
+    ...book,
+    currentStock: book.BookStockAction.reduce((total, action) => total + action.quantity, 0)
+  }))
+}
