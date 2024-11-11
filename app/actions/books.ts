@@ -66,7 +66,15 @@ export async function adjustBookStock(
   quantity: number,
   note?: string
 ) {
-  return await prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx) => {
+    // Get current stock
+    const currentStock = await getCurrentStock(bookId)
+    
+    // Check if adjustment would result in negative stock
+    if (currentStock + quantity < 0) {
+      throw new Error('Cannot reduce stock below 0')
+    }
+
     // Create the stock action
     return tx.bookStockAction.create({
       data: {
@@ -106,4 +114,57 @@ export async function getAllBooks() {
     ...book,
     currentStock: book.BookStockAction.reduce((total, action) => total + action.quantity, 0)
   }))
+}
+
+export async function deleteBook(id: number) {
+  return prisma.$transaction(async (tx) => {
+    // Delete all stock actions first due to foreign key constraint
+    await tx.bookStockAction.deleteMany({
+      where: { bookId: id },
+    })
+    
+    // Then delete the book
+    await tx.book.delete({
+      where: { id },
+    })
+  })
+}
+
+export async function removeBookStock(bookId: number, quantity: number, note: string = 'Book removed') {
+  return prisma.$transaction(async (tx) => {
+    const currentStock = await getCurrentStock(bookId);
+    
+    if (currentStock < quantity) {
+      throw new Error('Cannot remove more books than current stock');
+    }
+
+    return tx.bookStockAction.create({
+      data: {
+        bookId,
+        quantity: -quantity, // Negative quantity for removal
+        note,
+      },
+    });
+  });
+}
+
+export async function setBookStock(bookId: number, newStock: number, note: string = 'Stock manually set') {
+  return prisma.$transaction(async (tx) => {
+    const currentStock = await getCurrentStock(bookId);
+    
+    if (newStock < 0) {
+      throw new Error('Stock cannot be negative');
+    }
+
+    // Calculate the adjustment needed
+    const adjustment = newStock - currentStock;
+    
+    return tx.bookStockAction.create({
+      data: {
+        bookId,
+        quantity: adjustment,
+        note,
+      },
+    });
+  });
 }
