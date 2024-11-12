@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import SignInButton from '@/components/SignInButton'
-
+import IsbnLookupForm from '@/components/IsbnLookupForm'
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
 
@@ -15,6 +15,7 @@ export default async function AdminPage() {
       <h1 className="text-2xl font-bold">Library Manager Admin</h1>
       <div>Welcome, {session.user.name}</div>
       <SignInButton />
+      <IsbnLookupForm />
     </div>
   )
 }

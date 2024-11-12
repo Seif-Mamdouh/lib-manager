@@ -18,3 +18,26 @@ model users {
   image     String
   createdAt DateTime @default(now())
 }
+
+model Book {
+  id              Int               @id @default(autoincrement())
+  isbn            String?           @unique
+  title           String
+  authors         String[]
+  publishedDate   String?
+  description     String?           @db.Text
+  pageCount       Int?
+  imageUrl        String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  BookStockAction BookStockAction[]
+}
+
+model BookStockAction {
+  id        Int      @id @default(autoincrement())
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  quantity  Int // Positive for additions, negative for removals
+  note      String? // Optional note explaining the action
+  createdAt DateTime @default(now())
+}
