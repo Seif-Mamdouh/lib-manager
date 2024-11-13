@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData} from '@/app/actions/books'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string>('')
   const [error, setError] = useState('')
+
+  const queryClient = useQueryClient()
 
   const { data: bookData, isLoading } = useQuery({
     queryKey: ['book', isbn],
@@ -23,6 +25,7 @@ export default function IsbnLookupForm() {
     mutationFn: () => saveBook(isbn!, bookData!),
     onSuccess: () => {
       setIsbn('')
+      queryClient.invalidateQueries({ queryKey: ['books'] })
       alert('Book saved successfully!')
     },
     onError: () => {
