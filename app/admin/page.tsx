@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import SignInButton from '@/components/SignInButton'
 import IsbnLookupForm from '@/components/IsbnLookupForm'
 import BookList from '@/components/BookList'
+import ManualBookEntry from '@/components/ManualBookEntry'
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
@@ -17,11 +18,11 @@ export default async function AdminPage() {
       <h1 className="text-2xl font-bold">Library Manager Admin</h1>
       <div>Welcome, {session.user.name}</div>
       <SignInButton />
-      <IsbnLookupForm />
-      <div className="w-full max-w-7xl">
-        <h2 className="text-xl font-bold mb-4">Library Books</h2>
-        <BookList />
+      <div className="w-full max-w-2xl space-y-8">
+        <IsbnLookupForm />
+        <ManualBookEntry />
       </div>
+      <BookList />
     </div>
   )
 }
