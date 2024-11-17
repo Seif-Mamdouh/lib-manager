@@ -3,12 +3,21 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData} from '@/app/actions/books'
+import BarcodeScanner from './BarcodeScanner'
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string>('')
   const [error, setError] = useState('')
+  const [isScanning, setIsScanning] = useState(false)
 
   const queryClient = useQueryClient()
+
+  const resetForm = () => {
+    setIsbn('')
+    setError('')
+    setIsScanning(false)
+    queryClient.removeQueries({ queryKey: ['book', isbn] })
+  }
 
   const { data: bookData, isLoading } = useQuery({
     queryKey: ['book', isbn],
@@ -24,28 +33,54 @@ export default function IsbnLookupForm() {
   const saveMutation = useMutation({
     mutationFn: () => saveBook(isbn!, bookData!),
     onSuccess: () => {
-      setIsbn('')
+      resetForm()
       queryClient.invalidateQueries({ queryKey: ['books'] })
       alert('Book saved successfully!')
     },
     onError: () => {
       setError('Failed to save book')
-    }, 
+    }
   })
+
+  const handleScan = (scannedIsbn: string) => {
+    setError('')
+    setIsbn(scannedIsbn)
+    setIsScanning(false)
+  }
+
+  const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('')
+    setIsbn(e.target.value)
+    if (bookData) {
+      queryClient.removeQueries({ queryKey: ['book', isbn] })
+    }
+  }
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-      <div className="mb-6 w-full">
-        <input
-          type="text"
-          value={isbn}
-          onChange={(e) => {
-            setError('')
-            setIsbn(e.target.value)
-          }}
-          placeholder="Enter ISBN (13 digits or 10 digits)"
-          className="w-full px-4 py-2 border rounded-md text-foreground bg-background"
-        />
+      <div className="mb-6 w-full space-y-4">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={isbn}
+            onChange={handleManualInput}
+            placeholder="Enter ISBN (13 digits or 10 digits)"
+            className="flex-1 px-4 py-2 border rounded-md text-foreground bg-background"
+          />
+          <button
+            onClick={() => setIsScanning(prev => !prev)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            {isScanning ? 'Stop Scanning' : 'Scan Barcode'}
+          </button>
+        </div>
+
+        {isScanning && (
+          <BarcodeScanner
+            onScan={handleScan}
+            onError={setError}
+          />
+        )}
       </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
@@ -65,7 +100,7 @@ export default function IsbnLookupForm() {
           )}
           <p className="text-sm mb-4">{bookData.description}</p>
           <button
-            onClick={(e) => saveMutation.mutate()}
+            onClick={() => saveMutation.mutate()}
             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
             disabled={saveMutation.isPending}
           >
