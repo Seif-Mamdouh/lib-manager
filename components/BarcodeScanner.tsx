@@ -20,8 +20,15 @@ export default function BarcodeScanner({ onScan, onError }: BarcodeScannerProps)
           return
         }
 
+        const backCamera = videoInputDevices.find(device => 
+          device.label.toLowerCase().includes('back') || 
+          device.label.toLowerCase().includes('environment')
+        )
+
+        const selectedDeviceId = backCamera?.deviceId || videoInputDevices[0].deviceId
+
         await codeReader.decodeFromVideoDevice(
-          null,
+          selectedDeviceId,
           videoRef.current!,
           (result) => {
             if (result) {

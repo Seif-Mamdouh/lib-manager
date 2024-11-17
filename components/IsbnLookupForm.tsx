@@ -13,10 +13,10 @@ export default function IsbnLookupForm() {
   const queryClient = useQueryClient()
 
   const resetForm = () => {
+    queryClient.removeQueries({ queryKey: ['book', isbn] })
     setIsbn('')
     setError('')
     setIsScanning(false)
-    queryClient.removeQueries({ queryKey: ['book', isbn] })
   }
 
   const { data: bookData, isLoading } = useQuery({
