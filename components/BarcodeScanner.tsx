@@ -26,7 +26,6 @@ export default function BarcodeScanner({ onScan, onError }: BarcodeScannerProps)
           (result) => {
             if (result) {
               const scannedText = result.getText()
-              // Most ISBN barcodes start with special characters - clean them up
               const isbn = scannedText.replace(/[^0-9X]/gi, '')
               if (isbn.length === 10 || isbn.length === 13) {
                 onScan(isbn)
