@@ -13,7 +13,7 @@ export default function IsbnLookupForm() {
   const queryClient = useQueryClient()
 
   const resetForm = () => {
-    queryClient.removeQueries({ queryKey: ['book', isbn] })
+    queryClient.resetQueries({ queryKey: ['book', isbn], exact: true })
     setIsbn('')
     setError('')
     setIsScanning(false)
@@ -49,10 +49,11 @@ export default function IsbnLookupForm() {
   }
 
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newIsbn = e.target.value
     setError('')
-    setIsbn(e.target.value)
+    setIsbn(newIsbn)
     if (bookData) {
-      queryClient.removeQueries({ queryKey: ['book', isbn] })
+      queryClient.resetQueries({ queryKey: ['book', newIsbn], exact: true })
     }
   }
 
