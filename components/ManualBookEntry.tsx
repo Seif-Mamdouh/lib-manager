@@ -4,29 +4,25 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { saveBook, BookData } from '@/app/actions/books'
 
+const EMPTY_BOOK_DATA: BookData = {
+  isbn: '',
+  title: '',
+  authors: [''],
+  publishedDate: undefined,
+  pageCount: undefined,
+  description: undefined,
+  imageUrl: undefined,
+}
+
 export default function ManualBookEntry() {
   const queryClient = useQueryClient()
-  const [bookData, setBookData] = useState<BookData>({
-    title: '',
-    authors: [''],
-    publishedDate: '',
-    pageCount: undefined,
-    description: '',
-    imageUrl: '',
-  })
+  const [bookData, setBookData] = useState<BookData>(EMPTY_BOOK_DATA)
   const [isFormVisible, setIsFormVisible] = useState(false)
 
   const saveMutation = useMutation({
-    mutationFn: () => saveBook('', bookData),
+    mutationFn: () => saveBook(bookData.isbn, bookData),
     onSuccess: () => {
-      setBookData({
-        title: '',
-        authors: [''],
-        publishedDate: '',
-        pageCount: undefined,
-        description: '',
-        imageUrl: '',
-      })
+      setBookData(EMPTY_BOOK_DATA)
       queryClient.invalidateQueries({ queryKey: ['books'] })
       alert('Book saved successfully!')
     },
@@ -35,19 +31,16 @@ export default function ManualBookEntry() {
     },
   })
   const handleAuthorChange = (index: number, value: string) => {
-    if (!bookData.authors) return
-    const newAuthors = [...bookData.authors]
+    const newAuthors = [...(bookData.authors ?? [])]
     newAuthors[index] = value
     setBookData({ ...bookData, authors: newAuthors })
   }
   const addAuthorField = () => {
-    if (!bookData.authors) return
-    setBookData({ ...bookData, authors: [...bookData.authors, ''] })
+    setBookData({ ...bookData, authors: [...(bookData.authors ?? []), ''] })
   }
 
   const removeAuthorField = (index: number) => {
-    if (!bookData.authors) return
-    const newAuthors = bookData.authors.filter((_, i) => i !== index)
+    const newAuthors = (bookData.authors ?? []).filter((_, i) => i !== index)
     setBookData({ ...bookData, authors: newAuthors })
   }
 
@@ -75,6 +68,17 @@ export default function ManualBookEntry() {
       </div>
 
       <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">ISBN *</label>
+          <input
+            type="text"
+            value={bookData.isbn}
+            onChange={(e) => setBookData({ ...bookData, isbn: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md text-black"
+            required
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-1">Title *</label>
           <input
