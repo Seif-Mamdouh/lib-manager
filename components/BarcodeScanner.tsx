@@ -27,19 +27,23 @@ export default function BarcodeScanner({ onScan, onError }: BarcodeScannerProps)
 
         const selectedDeviceId = backCamera?.deviceId || videoInputDevices[0].deviceId
 
-        await codeReader.decodeFromVideoDevice(
-          selectedDeviceId,
-          videoRef.current!,
-          (result) => {
-            if (result) {
-              const scannedText = result.getText()
-              const isbn = scannedText.replace(/[^0-9X]/gi, '')
-              if (isbn.length === 10 || isbn.length === 13) {
-                onScan(isbn)
+        if (videoRef.current) {
+          await codeReader.decodeFromVideoDevice(
+            selectedDeviceId,
+            videoRef.current,
+            (result) => {
+              if (result) {
+                const scannedText = result.getText()
+                const isbn = scannedText.replace(/[^0-9X]/gi, '')
+                if (isbn.length === 10 || isbn.length === 13) {
+                  onScan(isbn)
+                }
               }
             }
-          }
-        )
+          )
+        } else {
+          onError?.('Video element not found')
+        }
       } catch (err) {
         onError?.('Failed to access camera')
       }
