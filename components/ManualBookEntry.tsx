@@ -4,31 +4,25 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { saveBook, BookData } from '@/app/actions/books'
 
+const EMPTY_BOOK_DATA: BookData = {
+  isbn: '',
+  title: '',
+  authors: [''],
+  publishedDate: undefined,
+  pageCount: undefined,
+  description: undefined,
+  imageUrl: undefined,
+}
+
 export default function ManualBookEntry() {
   const queryClient = useQueryClient()
-  const [bookData, setBookData] = useState<BookData>({
-    isbn: '',
-    title: '',
-    authors: [''],
-    publishedDate: undefined,
-    pageCount: undefined,
-    description: undefined,
-    imageUrl: undefined,
-  })
+  const [bookData, setBookData] = useState<BookData>(EMPTY_BOOK_DATA)
   const [isFormVisible, setIsFormVisible] = useState(false)
 
   const saveMutation = useMutation({
     mutationFn: () => saveBook(bookData.isbn, bookData),
     onSuccess: () => {
-      setBookData({
-        isbn: '',
-        title: '',
-        authors: [''],
-        publishedDate: undefined,
-        pageCount: undefined,
-        description: undefined,
-        imageUrl: undefined,
-      })
+      setBookData(EMPTY_BOOK_DATA)
       queryClient.invalidateQueries({ queryKey: ['books'] })
       alert('Book saved successfully!')
     },
