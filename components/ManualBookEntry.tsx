@@ -7,25 +7,27 @@ import { saveBook, BookData } from '@/app/actions/books'
 export default function ManualBookEntry() {
   const queryClient = useQueryClient()
   const [bookData, setBookData] = useState<BookData>({
+    isbn: '',
     title: '',
     authors: [''],
-    publishedDate: '',
+    publishedDate: undefined,
     pageCount: undefined,
-    description: '',
-    imageUrl: '',
+    description: undefined,
+    imageUrl: undefined,
   })
   const [isFormVisible, setIsFormVisible] = useState(false)
 
   const saveMutation = useMutation({
-    mutationFn: () => saveBook('', bookData),
+    mutationFn: () => saveBook(bookData.isbn, bookData),
     onSuccess: () => {
       setBookData({
+        isbn: '',
         title: '',
         authors: [''],
-        publishedDate: '',
+        publishedDate: undefined,
         pageCount: undefined,
-        description: '',
-        imageUrl: '',
+        description: undefined,
+        imageUrl: undefined,
       })
       queryClient.invalidateQueries({ queryKey: ['books'] })
       alert('Book saved successfully!')
@@ -75,6 +77,17 @@ export default function ManualBookEntry() {
       </div>
 
       <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">ISBN *</label>
+          <input
+            type="text"
+            value={bookData.isbn}
+            onChange={(e) => setBookData({ ...bookData, isbn: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md text-black"
+            required
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-1">Title *</label>
           <input
