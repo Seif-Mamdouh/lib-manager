@@ -12,36 +12,31 @@ export default function PublicBookCard({ book }: PublicBookCardProps) {
       borderRadius={16}
       neonColors={{ firstColor: '#FF1B6B', secondColor: '#45CAFF' }}
     >
-      <div className="flex flex-col h-full">
-        <div className="flex gap-3 text-white">
-          {book.imageUrl && (
+      <div className="flex flex-col h-full p-1 gap-4">
+        {/* Image Container - Fixed height */}
+        <div className="w-full h-48 bg-gray-800 rounded-xl overflow-hidden">
+          {book.imageUrl ? (
             <img
               src={book.imageUrl}
               alt={book.title}
-              className="w-24 h-auto object-cover rounded-md"
+              className="w-full h-full object-cover"
             />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              No Image Available
+            </div>
           )}
-          <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1">{book.title}</h3>
-            <p className="text-sm mb-0.5 text-gray-300">
-              By: {book.authors?.join(', ') || 'Unknown'}
-            </p>
-            <p className="text-sm mb-0.5 text-gray-300">
-              Published: {book.publishedDate || 'Unknown'}
-            </p>
-            <p className="text-sm mb-0.5 text-gray-300">
-              ISBN: {book.isbn || 'Not available'}
-            </p>
-            <p className="text-sm font-semibold">
-              Available Copies: {book.BookStockAction.reduce((acc, action) => acc + action.quantity, 0)}
-            </p>
-          </div>
         </div>
-        {book.description && (
-          <p className="text-sm mt-2 text-gray-300 overflow-hidden text-ellipsis line-clamp-2">
-            {book.description}
+
+        <div className="flex flex-col flex-1 text-white">
+          <h3 className="font-bold text-nm line-clamp-2 h-14">{book.title}</h3>
+          <p className="text-sm line-clamp-1">By: {book.authors?.join(', ') || 'Unknown'}</p>
+          <p className="text-sm">Published: {book.publishedDate || 'Unknown'}</p>
+          <p className="text-sm">ISBN: {book.isbn || 'Not available'}</p>
+          <p className="text-sm text-white font-semibold">
+            Available Copies: {book.BookStockAction.reduce((acc, action) => acc + action.quantity, 0)}
           </p>
-        )}
+        </div>
       </div>
     </NeonGradientCard>
   )

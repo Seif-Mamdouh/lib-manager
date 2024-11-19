@@ -18,10 +18,14 @@ export default function PublicBookList() {
       {isError && (
         <div className="text-red-500 text-center mb-4">Error refreshing books</div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-        {books.sort((a, b) => b.currentStock - a.currentStock).map((book) => (
-          <PublicBookCard key={book.id} book={book} />
-        ))}
+      <div className="flex flex-wrap gap-6 p-6 justify-center max-w-[1600px] mx-auto">
+        {books
+          .sort((a, b) => b.currentStock - a.currentStock)
+          .map((book) => (
+            <div key={book.id} className="w-[280px] flex-grow-0 flex-shrink-0">
+              <PublicBookCard book={book} />
+            </div>
+          ))}
       </div>
     </>
   )
