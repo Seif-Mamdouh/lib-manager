@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma'
 
 export type BookData = {
+  isbn: string
   title: string
   authors?: string[]
   publishedDate?: string
@@ -29,6 +30,7 @@ export async function lookupBook(isbn: string): Promise<BookData> {
     description: bookInfo.description,
     pageCount: bookInfo.pageCount,
     imageUrl: bookInfo.imageLinks?.thumbnail,
+    isbn,
   }
 }
 
@@ -44,7 +46,6 @@ export async function saveBook(isbn: string, bookData: BookData) {
     } else {
       const book = await tx.book.create({
         data: {
-          isbn,
           ...bookData,
         },
       })
