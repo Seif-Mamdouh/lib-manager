@@ -37,19 +37,16 @@ export default function ManualBookEntry() {
     },
   })
   const handleAuthorChange = (index: number, value: string) => {
-    if (!bookData.authors) return
-    const newAuthors = [...bookData.authors]
+    const newAuthors = [...(bookData.authors ?? [])]
     newAuthors[index] = value
     setBookData({ ...bookData, authors: newAuthors })
   }
   const addAuthorField = () => {
-    if (!bookData.authors) return
-    setBookData({ ...bookData, authors: [...bookData.authors, ''] })
+    setBookData({ ...bookData, authors: [...(bookData.authors ?? []), ''] })
   }
 
   const removeAuthorField = (index: number) => {
-    if (!bookData.authors) return
-    const newAuthors = bookData.authors.filter((_, i) => i !== index)
+    const newAuthors = (bookData.authors ?? []).filter((_, i) => i !== index)
     setBookData({ ...bookData, authors: newAuthors })
   }
 
