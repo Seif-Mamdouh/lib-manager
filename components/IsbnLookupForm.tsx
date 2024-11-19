@@ -52,9 +52,6 @@ export default function IsbnLookupForm() {
     const newIsbn = e.target.value
     setError('')
     setIsbn(newIsbn)
-    if (bookData) {
-      queryClient.resetQueries({ queryKey: ['book', newIsbn], exact: true })
-    }
   }
 
   return (
