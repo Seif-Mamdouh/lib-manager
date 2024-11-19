@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getAllBooks } from '@/app/actions/books'
+import PublicBookCard from './PublicBookCard'
 
 export default function PublicBookList() {
   const { data: books, isLoading, isError } = useQuery({
@@ -13,39 +14,15 @@ export default function PublicBookList() {
   if (!books?.length) return <div className="text-center">No books in the library yet</div>
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {isError && <div className="text-red-500 text-center">Error loading books</div>}
-      {books.map((book) => (
-        <div key={book.id} className="border rounded-lg p-4 shadow-sm">
-          <div className="flex gap-4">
-            {book.imageUrl && (
-              <img
-                src={book.imageUrl}
-                alt={book.title}
-                className="w-24 h-auto object-cover"
-              />
-            )}
-            <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">{book.title}</h3>
-              <p className="text-sm mb-1">
-                By: {book.authors?.join(', ') || 'Unknown'}
-              </p>
-              <p className="text-sm mb-1">
-                Published: {book.publishedDate || 'Unknown'}
-              </p>
-              <p className="text-sm mb-1">
-                ISBN: {book.isbn || 'Not available'}
-              </p>
-              <p className="text-sm font-semibold mb-2">
-                Available Copies: {book.currentStock}
-              </p>
-            </div>
-          </div>
-          {book.description && (
-            <p className="text-sm mt-2 line-clamp-3">{book.description}</p>
-          )}
-        </div>
-      ))}
-    </div>
+    <>
+      {isError && (
+        <div className="text-red-500 text-center mb-4">Error refreshing books</div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {books.sort((a, b) => b.currentStock - a.currentStock).map((book) => (
+          <PublicBookCard key={book.id} book={book} />
+        ))}
+      </div>
+    </>
   )
 }
