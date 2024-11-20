@@ -35,6 +35,9 @@ importers:
       autoprefixer:
         specifier: 10.4.16
         version: 10.4.16(postcss@8.4.31)
+      book-cover-3d:
+        specifier: ^1.1.2
+        version: 1.1.2(react@18.2.0)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -531,6 +534,12 @@ packages:
   binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
+
+  book-cover-3d@1.1.2:
+    resolution: {integrity: sha512-L4BDeW0Xw1tyN08JRoWqC9wJbjOJaKRgyLM3ZMZylVOT1DRy5d34bDgrrz18/4ybp+eWUP0Jlop/xuOrwrFNoA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -2214,6 +2223,10 @@ snapshots:
   big-integer@1.6.52: {}
 
   binary-extensions@2.2.0: {}
+
+  book-cover-3d@1.1.2(react@18.2.0):
+    dependencies:
+      react: 18.2.0
 
   brace-expansion@1.1.11:
     dependencies:

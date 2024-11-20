@@ -18,7 +18,7 @@ export default function PublicBookList() {
       {isError && (
         <div className="text-red-500 text-center mb-4">Error refreshing books</div>
       )}
-      <div className="flex flex-wrap gap-6 p-6 justify-center max-w-[1600px] mx-auto">
+      <div className="flex flex-wrap gap-6 p-6 justify-center mx-auto">
         {books
           .sort((a, b) => b.currentStock - a.currentStock)
           .map((book) => (
