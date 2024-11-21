@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth'
 import SignInButton from '@/components/SignInButton'
 import IsbnLookupForm from '@/components/IsbnLookupForm'
 import BookList from '@/components/BookList'
-import ManualBookEntry from '@/components/ManualBookEntry'
+import ManualBookEntry from '@/components/AdminUser/ManualBookEntry'
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
