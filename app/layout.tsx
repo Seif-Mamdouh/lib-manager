@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Providers from "@/components/Providers";
+import Providers from "@/components/AdminUser/Providers";
 
 export const metadata: Metadata = {
   title: "Library Manager",
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-black text-white">
         <Providers>{children}</Providers>
       </body>
     </html>
