@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData} from '@/app/actions/books'
-import BarcodeScanner from './AdminUser/BarcodeScanner'
+import BarcodeScanner from './BarcodeScanner'
+
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string>('')

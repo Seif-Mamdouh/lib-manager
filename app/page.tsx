@@ -1,4 +1,4 @@
-import PublicBookList from '@/components/PublicBookList'
+import PublicBookList from '@/components/PublicBooksDisplay/PublicBookList'
 
 export default function HomePage() {
   return (
