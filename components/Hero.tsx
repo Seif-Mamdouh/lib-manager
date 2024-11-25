@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import Image from 'next/image'
 
-
 export default function Hero() {
-    const image = '/public/lib.png'
   return (
     <div className="w-full relative">
       <div className="relative h-screen">
         {/* Background Image with Overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${image})`,
-          }}
-        >
+        <div className="absolute inset-0">
+          <Image
+            src="/public/lib.png"
+            alt="Library background"
+            fill
+            priority
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
