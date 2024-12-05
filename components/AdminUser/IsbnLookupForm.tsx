@@ -26,7 +26,7 @@ export default function IsbnLookupForm() {
     enabled: isbn.length === 13 || isbn.length === 10,
     retry: false,
   })
-  
+
   const handleScan = (scannedIsbn: string) => {
     setError('')
     setIsbn(scannedIsbn)
@@ -85,7 +85,10 @@ handleScan(result.getText())
         </div>
 
         {isScanning && (
-          <BarcodeScanner />
+          <BarcodeScanner
+            onScan={handleScan}
+            onError={setError}
+          />
         )}
       </div>
 
