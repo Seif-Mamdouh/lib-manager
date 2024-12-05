@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { lookupBook, saveBook, BookData} from '@/app/actions/books'
+import { useZxing } from 'react-zxing'
 import BarcodeScanner from './BarcodeScanner'
+
 
 export default function IsbnLookupForm() {
   const [isbn, setIsbn] = useState<string>('')
@@ -13,22 +15,37 @@ export default function IsbnLookupForm() {
   const queryClient = useQueryClient()
 
   const resetForm = () => {
-    queryClient.resetQueries({ queryKey: ['book', isbn], exact: true })
     setIsbn('')
     setError('')
     setIsScanning(false)
   }
 
-  const { data: bookData, isLoading } = useQuery({
+  const { data: bookData, isLoading, isError } = useQuery({
     queryKey: ['book', isbn],
     queryFn: () => lookupBook(isbn),
     enabled: isbn.length === 13 || isbn.length === 10,
     retry: false,
-    throwOnError: () => {
-      setError('Failed to find book')
-      return false
+  })
+
+  const handleScan = (scannedIsbn: string) => {
+    setError('')
+    setIsbn(scannedIsbn)
+    setIsScanning(false)
+  }
+
+  const {
+    ref: barcodeRef
+  } = useZxing({
+    onDecodeResult(result) {
+handleScan(result.getText())
     }
   })
+
+  useEffect(() => {
+    if (isError) {
+      setError('Failed to find book')
+    }
+  }, [isError])
 
   const saveMutation = useMutation({
     mutationFn: () => saveBook(isbn!, bookData!),
@@ -41,12 +58,6 @@ export default function IsbnLookupForm() {
       setError('Failed to save book')
     }
   })
-
-  const handleScan = (scannedIsbn: string) => {
-    setError('')
-    setIsbn(scannedIsbn)
-    setIsScanning(false)
-  }
 
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIsbn = e.target.value

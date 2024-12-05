@@ -2,9 +2,9 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import SignInButton from '@/components/SignInButton'
-import IsbnLookupForm from '@/components/IsbnLookupForm'
-import BookList from '@/components/BookList'
-import ManualBookEntry from '@/components/ManualBookEntry'
+import ManualBookEntry from '@/components/AdminUser/ManualBookEntry'
+import IsbnLookupForm from '@/components/AdminUser/IsbnLookupForm'
+import BookList from '@/components/AdminUser/BookList'
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
